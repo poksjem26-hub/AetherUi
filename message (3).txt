@@ -1,0 +1,154 @@
+-- ============================================
+-- THEME PRESETS — DARI AETHER
+-- ============================================
+
+local ThemePresets = {
+    -- Default Aether
+    Default = {
+        Accent = Color3.fromRGB(255, 182, 193),
+        Background = Color3.fromRGB(12, 12, 14),
+        ElementBackground = Color3.fromRGB(20, 20, 22),
+        TextColor = Color3.fromRGB(255, 255, 255)
+    },
+    
+    -- Dark Blue
+    DarkBlue = {
+        Accent = Color3.fromRGB(50, 150, 255),
+        Background = Color3.fromRGB(10, 12, 20),
+        ElementBackground = Color3.fromRGB(18, 22, 35),
+        TextColor = Color3.fromRGB(200, 220, 255)
+    },
+    
+    -- Neon Pink
+    NeonPink = {
+        Accent = Color3.fromRGB(255, 50, 150),
+        Background = Color3.fromRGB(15, 5, 15),
+        ElementBackground = Color3.fromRGB(25, 10, 25),
+        TextColor = Color3.fromRGB(255, 200, 230)
+    },
+    
+    -- Cyber Green
+    CyberGreen = {
+        Accent = Color3.fromRGB(50, 255, 100),
+        Background = Color3.fromRGB(5, 15, 5),
+        ElementBackground = Color3.fromRGB(10, 25, 10),
+        TextColor = Color3.fromRGB(180, 255, 200)
+    },
+    
+    -- Gold
+    Gold = {
+        Accent = Color3.fromRGB(255, 200, 50),
+        Background = Color3.fromRGB(15, 12, 5),
+        ElementBackground = Color3.fromRGB(25, 20, 10),
+        TextColor = Color3.fromRGB(255, 240, 200)
+    }
+}
+
+-- Fungsi untuk apply preset
+function ApplyThemePreset(presetName)
+    local preset = ThemePresets[presetName]
+    if not preset then return end
+    
+    for name, color in pairs(preset) do
+        if ThemePreset[name] then
+            RefreshTheme(name, color)
+        end
+    end
+    
+    ShowNotification("🎨 Theme: " .. presetName)
+end
+
+-- Contoh: Buat dropdown untuk pilih tema
+function CreateThemeDropdown()
+    local dropdownFrame = Instance.new("Frame")
+    dropdownFrame.Parent = SettingsContent
+    dropdownFrame.Size = UDim2.new(0, 250, 0, 40)
+    dropdownFrame.Position = UDim2.new(0, 0, 0, 400)
+    dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 55)
+    dropdownFrame.BackgroundTransparency = 0.3
+    dropdownFrame.BorderSizePixel = 1
+    dropdownFrame.BorderColor3 = Color3.fromRGB(60, 100, 180)
+    
+    local dropdownLabel = Instance.new("TextLabel")
+    dropdownLabel.Parent = dropdownFrame
+    dropdownLabel.Size = UDim2.new(0, 100, 1, 0)
+    dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
+    dropdownLabel.Text = "Theme:"
+    dropdownLabel.TextColor3 = Color3.fromRGB(180, 200, 220)
+    dropdownLabel.BackgroundTransparency = 1
+    dropdownLabel.Font = Enum.Font.GothamMedium
+    dropdownLabel.TextSize = 14
+    dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local dropdownBtn = Instance.new("TextButton")
+    dropdownBtn.Parent = dropdownFrame
+    dropdownBtn.Size = UDim2.new(0, 130, 1, -4)
+    dropdownBtn.Position = UDim2.new(0, 110, 0, 2)
+    dropdownBtn.Text = "Default"
+    dropdownBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    dropdownBtn.BackgroundColor3 = Color3.fromRGB(40, 45, 70)
+    dropdownBtn.BackgroundTransparency = 0.2
+    dropdownBtn.BorderSizePixel = 0
+    dropdownBtn.Font = Enum.Font.GothamMedium
+    dropdownBtn.TextSize = 14
+    
+    local isOpen = false
+    local optionsFrame
+    
+    dropdownBtn.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        if isOpen then
+            if optionsFrame then optionsFrame:Destroy() end
+            optionsFrame = Instance.new("Frame")
+            optionsFrame.Parent = dropdownFrame
+            optionsFrame.Size = UDim2.new(1, 0, 0, 150)
+            optionsFrame.Position = UDim2.new(0, 0, 0, 40)
+            optionsFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 55)
+            optionsFrame.BackgroundTransparency = 0.3
+            optionsFrame.BorderSizePixel = 1
+            optionsFrame.BorderColor3 = Color3.fromRGB(60, 100, 180)
+            optionsFrame.ClipsDescendants = true
+            
+            local layout = Instance.new("UIListLayout")
+            layout.Parent = optionsFrame
+            layout.Padding = UDim.new(0, 2)
+            layout.SortOrder = Enum.SortOrder.LayoutOrder
+            
+            for name in pairs(ThemePresets) do
+                local opt = Instance.new("TextButton")
+                opt.Parent = optionsFrame
+                opt.Size = UDim2.new(1, 0, 0, 25)
+                opt.Text = name
+                opt.TextColor3 = Color3.fromRGB(220, 220, 240)
+                opt.BackgroundColor3 = Color3.fromRGB(40, 45, 70)
+                opt.BackgroundTransparency = 0.3
+                opt.BorderSizePixel = 0
+                opt.Font = Enum.Font.GothamMedium
+                opt.TextSize = 13
+                
+                opt.MouseButton1Click:Connect(function()
+                    ApplyThemePreset(name)
+                    dropdownBtn.Text = name
+                    isOpen = false
+                    optionsFrame:Destroy()
+                end)
+                
+                opt.MouseEnter:Connect(function()
+                    opt.BackgroundTransparency = 0.1
+                end)
+                
+                opt.MouseLeave:Connect(function()
+                    opt.BackgroundTransparency = 0.3
+                end)
+            end
+        else
+            if optionsFrame then
+                optionsFrame:Destroy()
+                optionsFrame = nil
+            end
+        end
+    end)
+end
+
+-- Buat dropdown
+CreateThemeDropdown()
