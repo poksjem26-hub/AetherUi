@@ -65,7 +65,7 @@ local Library do
     Library = {
         Theme =  { },
 
-        MenuKeybind = tostring(Enum.KeyCode.ControRightl), 
+        MenuKeybind = tostring(Enum.KeyCode.Z), 
 
         Flags = { },
 
